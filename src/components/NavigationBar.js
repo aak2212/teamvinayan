@@ -22,14 +22,14 @@ const Styles = styled.div`
 export const NavigationBar = () => (
   <Styles>
     <Navbar expand="lg">
-      <Navbar.Brand href="/">Vinayan</Navbar.Brand>
+      <Navbar.Brand to="/about">Vinayan</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav"/>
       
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto">
           <li><Nav.Link href="/">Home</Nav.Link></li> 
-          <Nav.Item><Nav.Link href="/about">About</Nav.Link></Nav.Item>
-          <Nav.Item><Nav.Link href="/learn">Start Learning</Nav.Link></Nav.Item>
+          <li><Nav.Link href="/about">About</Nav.Link></li>
+          <Nav.Item><Nav.Link to="/learn">Start Learning</Nav.Link></Nav.Item>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
