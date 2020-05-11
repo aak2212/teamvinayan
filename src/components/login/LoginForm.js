@@ -116,7 +116,7 @@ class LoginForm extends Component {
                         <br/>
                         <br/>
                         <span style={{color: '#999'}}>New to Vinayan?</span><br />
-                        <Link to="/" className="sign-up-text">
+                        <Link to="/signup" className="sign-up-text">
                             Sign up now
                         </Link>
                     </form>

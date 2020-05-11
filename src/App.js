@@ -2,7 +2,7 @@ import React from 'react';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { FooterPage } from './components/FooterPage';
-import { Navigation, Home, About, StartLearn} from "./components";
+import { Navigation, Home, About} from "./components";
 import './App.css';
 import Login from './pages/Login';
 
