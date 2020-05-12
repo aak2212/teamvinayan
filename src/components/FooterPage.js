@@ -26,7 +26,7 @@ ul li a:hover {
 
 export const FooterPage = () => {
   return (
-    <FooterContainer className="fixed-bottom">
+    <FooterContainer className="navigation">
       <div className="footer-middle">
       <div className="container">
         <div className="row">

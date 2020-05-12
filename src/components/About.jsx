@@ -13,11 +13,13 @@ function About() {
             />
           </div>
           <div class="col-lg-5">
+          <br /><br /><br /><br /><br /><br /><br /><br />
             <h1 class="font-weight-light">About</h1>
             <p>
               Vinayan is an online platform which helps aspiring JEE students to prepare for the JEE exams.
               It was started by 8 IIT-Kanpur under-graduate students.
             </p>
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
           </div>
         </div>
       </div>

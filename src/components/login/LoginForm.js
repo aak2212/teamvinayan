@@ -142,6 +142,7 @@ const FormContainer = styled.div`
         width: 28.125rem;
         height: 41.25rem;
         padding: 2rem;
+        margin-top: 4rem;
     }
 
     .input-container {

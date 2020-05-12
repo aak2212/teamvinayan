@@ -13,10 +13,12 @@ function Home() {
             />
           </div>
           <div class="col-lg-5">
+          <br /><br /><br /><br /><br /><br /><br /><br />
             <h1 class="font-weight-light">Home</h1>
             <p>
               Courses and what we offer
             </p>
+            <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
           </div>
         </div>
       </div>
