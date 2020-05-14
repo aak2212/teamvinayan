@@ -108,7 +108,7 @@ class SignUp extends Component {
             <FormContainer>
                 <div className="form-container">
                     <form>
-                        <h1 align="center">Sign Up</h1>
+                        <h1 align="center" style={{color: '#999'}}>Sign Up</h1>
                         <div className="input-container">
                             <input 
                             className={this.state.nameError ? 'input-error input-empty' : 'input-empty'} 
