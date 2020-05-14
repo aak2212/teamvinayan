@@ -5,6 +5,7 @@ import { FooterPage } from './components/FooterPage';
 import { Navigation, Home, About} from "./components";
 import './App.css';
 import Login from './pages/Login';
+import SignUp from './pages/signup';
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
         <Switch>
           <Route path="/" exact component={() => <Home />} />
           <Route path="/about" exact component={() => <About />} />
-          <Route path="/login" exact component={() => <Login />} />
+          <Route path="/login" exact component={() => <Login />} />    
         </Switch>
+        <Route path="/signup" exact component={() => <SignUp />} />
         <FooterPage />
 
       </Router>

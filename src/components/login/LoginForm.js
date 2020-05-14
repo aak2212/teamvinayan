@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import {Link} from 'react-router-dom';
+import {Link, Route} from 'react-router-dom';
+
 //import FBlogo from ''
 
 const regexp = RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
@@ -106,9 +107,10 @@ class LoginForm extends Component {
                           <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign In</Btn>  
                         </div>
                         <label className="checkbox-container">
-                            Remember me
+                            
                             <input type="checkbox" defaultChecked={this.state.checked} onChange={this.handlerCheckbox} />
                             <span className="checkmark"></span>
+                            Remember me
                         </label>
                         <Link to="/help" className="need-help">
                             Need Help?
@@ -119,6 +121,7 @@ class LoginForm extends Component {
                         <Link to="/signup" className="sign-up-text">
                             Sign up now
                         </Link>
+                        
                     </form>
                 </div>
             </FormContainer>
@@ -140,9 +143,9 @@ const FormContainer = styled.div`
         background: #343a40;
         position: realtive;
         width: 28.125rem;
-        height: 41.25rem;
+        
         padding: 2rem;
-        margin-top: 4rem;
+        margin: 4rem 0 7rem 0;
     }
 
     .input-container {
@@ -200,22 +203,19 @@ const FormContainer = styled.div`
     }
 
     .checkbox-container input {
-        display: none;
+        margin-right:0.2rem;
     }
 
     .checkbox-container .checkmark {
-        display: inline-block;
-        background: #454545;
+        display: inline;
+        
         width: 1.1rem;
         height: 1.1rem;
-        left: 33.5rem;
-        top: 26.35rem;
+        
         border-radius: 0.1rem;
         position: relative; 
     }
-
     .checkbox-container input:checked + .checkmark:after {
-        content: '';
         position: relative;
         height: 0.25rem;
         width: 0.625rem;

@@ -155,9 +155,9 @@ class SignUp extends Component {
                           <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign Up</Btn>  
                         </div>
                         <label className="checkbox-container">
-                            Remember me
                             <input type="checkbox" defaultChecked={this.state.checked} onChange={this.handlerCheckbox} />
                             <span className="checkmark"></span>
+                            Remember me
                         </label>
                         <Link to="/help" className="need-help">
                             Need Help?
@@ -273,6 +273,7 @@ const FormContainer = styled.div`
         left: 21%;
         transform: rotate(-45deg);
     }
+    
 
     .need-help {
         text-decoration: none;
