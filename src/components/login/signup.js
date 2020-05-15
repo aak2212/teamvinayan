@@ -1,40 +1,34 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-
 import {Link} from 'react-router-dom';
-import LoginString from './LoginStrings';
-import firebase from '../../Services/firebase';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
-
-//import FBlogo from ''
-import {toast, ToastContainer} from 'react-toastify';
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Grid from '@material-ui/core/Grid';
-
-
 
 const regexp = RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
 
 const initState = {
-    checked: false, 
-    email: '',
+    checked: true, 
+    name: '',
+    email:'',
     password: '',
-    error: '',
+    confirmPassword:'',
+    nameError:'',
     emailError: '',
-    passwordError: ''
+    passwordError: '',
+    confirmPasswordError: ''
 }
-
-class LoginForm extends Component {
+class SignUp extends Component {
 
     state = initState;
-    //this.handleSubmit = this.handleSubmit.bind(this)
+
+    handleNameChange = e => {
+        this.setState({
+            name: e.target.value
+        });
+    };
+
     handleEmailChange = e => {
         this.setState({
             email: e.target.value
-        }); 
+        });
     };
 
     handlePasswordChange = e => {
@@ -42,15 +36,31 @@ class LoginForm extends Component {
             password: e.target.value
         });
     };
+    handleConfirmPasswordChange = e => {
+        this.setState({
+            confirmPassword: e.target.value
+        });
+    };
 
-    //validate
+     //validating
     validate = () => {
         let inputError = false;
         const errors = {
+            nameError: '',
             emailError: '',
-            passwordError: ''
+            passwordError: '',
+            confirmPasswordError: ''
         }
-
+        
+        if(!this.state.name) {
+            inputError=true;
+            errors.nameError='Please enter your name'
+        } else if(this.state.name.length<5){
+                inputError =true;
+                errors.nameError="Enter your full name"
+            
+        }
+            
         if(!this.state.email) {
             inputError = true;
             errors.emailError = 'Please enter a valid email'
@@ -64,6 +74,10 @@ class LoginForm extends Component {
         if(this.state.password.length < 4) {
             inputError = true;
             errors.passwordError = "Your password must contain between 4 to 32 characters"
+        }
+        if(this.state.confirmPassword!==this.state.password){
+            inputError = true;
+            errors.confirmPasswordError = "Confirm password does not match, re-enter "
         }
         
         this.setState({
@@ -82,50 +96,6 @@ class LoginForm extends Component {
         }
     }
 
-    componentDidMount(){
-        if(localStorage.getItem(LoginString.ID)){
-            this.setState({isLoading: false}, ()=>{
-                this.setState({isLoading: false})
-                //this.props.showToast(1,'Login success')
-                this.props.history.push('./chat')
-            })
-        }else{
-            this.setState({isLoading: false})
-        }
-    }
-
-    async onSubmit(e){
-        e.preventDefault();
-        this.setState({error:""});
-
-        await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(async result =>{
-            let user = result.user;
-            if(user){
-                await firebase.firestore().collection('users')
-                .where('id', '==', user.uid)
-                .get()
-                .then(function(querySnapshot){
-                    querySnapshot.forEach(function(doc){
-                        const currentdata = doc.data();
-                        localStorage.setItem(LoginString.FirebaseDocumentId, doc.id);
-                        localStorage.setItem(LoginString.ID, currentdata.id);
-                        localStorage.setItem(LoginString.Name, currentdata.name);
-                        localStorage.setItem(LoginString.Email, currentdata.email);
-                        localStorage.setItem(LoginString.Password, currentdata.password);
-                        localStorage.setItem(LoginString.PhotoURL, currentdata.URL);
-                        localStorage.setItem(LoginString.Description, currentdata.description);
-                    })
-                })
-            }
-            this.props.history.push('/chat')
-        }).catch(function(){
-            this.setState({
-                error: "error while signing in, please try again"
-            })
-        })
-    }
-
     //Checkbox
     handlerCheckbox = e => {
         this.setState({
@@ -138,7 +108,18 @@ class LoginForm extends Component {
             <FormContainer>
                 <div className="form-container">
                     <form>
-                        <h1 align="center">Sign In</h1>
+                        <h1 align="center">Sign Up</h1>
+                        <div className="input-container">
+                            <input 
+                            className={this.state.nameError ? 'input-error input-empty' : 'input-empty'} 
+                            type="name"  
+                            required
+                            onChange={this.handleNameChange}
+                            value={this.state.name}
+                            />
+                            <label>Full Name</label>
+                            <span style={{color: '#db7302'}}>{this.state.nameError}</span>
+                        </div>
                         <div className="input-container">
                             <input 
                             className={this.state.emailError ? 'input-error input-empty' : 'input-empty'} 
@@ -161,36 +142,44 @@ class LoginForm extends Component {
                             <span style={{color: '#db7302'}}>{this.state.passwordError}</span>
                         </div>
                         <div className="input-container">
-                          <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign In</Btn> 
-                          
+                            <input className={this.state.confirmPasswordError ? 'input-error input-empty' : 'input-empty'} 
+                            type="password" 
+                            required 
+                            onChange={this.handleConfirmPasswordChange}
+                            value={this.state.confirmPassword}
+                            />
+                            <label>Confirm Password</label>
+                            <span style={{color: '#db7302'}}>{this.state.confirmPasswordError}</span>
                         </div>
-                        
+                        <div className="input-container">
+                          <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign Up</Btn>  
+                        </div>
                         <label className="checkbox-container">
-                            
+                            Remember me
                             <input type="checkbox" defaultChecked={this.state.checked} onChange={this.handlerCheckbox} />
                             <span className="checkmark"></span>
-                            Remember me
                         </label>
                         <Link to="/help" className="need-help">
                             Need Help?
                         </Link>
                         <br/>
                         <br/>
-                        <span style={{color: '#999'}}>New to Vinayan?</span><br />
-                        <Link to="/signup" className="sign-up-text">
-                            Sign up now
+                        <span style={{color: '#999'}}>Already registered?</span><br />
+                        <Link to="/login" className="login-text">
+                            Sign In
                         </Link>
-                        
                     </form>
                 </div>
             </FormContainer>
         )
     }
+
 }
 
-export default LoginForm;
+export default SignUp;
 
-//Form Container
+//style
+
 const FormContainer = styled.div`
     display: grid;
     justify-content: center;
@@ -204,8 +193,6 @@ const FormContainer = styled.div`
         width: 28.125rem;
         
         padding: 2rem;
-        margin-top: 6rem;
-        margin-bottom: 3rem;
         margin: 4rem 0 7rem 0;
     }
 
@@ -294,7 +281,7 @@ const FormContainer = styled.div`
         font-size: 0.9rem;
     }
 
-    .sign-up-text {
+    .login-text {
         font-size: 1.1rem;
         color: #fff;
         &:hover {
@@ -318,3 +305,4 @@ const Btn = styled.button`
     text-decoration: none;
     margin: 1rem 0;
 `;
+    

@@ -5,11 +5,14 @@ import { FooterPage } from './components/FooterPage';
 //import { Navigation, Home, About} from "./components";
 import './App.css';
 import Login from './pages/Login';
+
 import Signup from './components/loginform/Signup';
 import Profile from './pages/Profile/Profile';
 import Chat from './pages/Chat/Chat';
 import {toast, ToastContainer} from 'react-toastify';
 import Home from './pages/Home/Home';
+
+import SignUp from './pages/signup';
 
 class App extends Component{
   showToast = (type, message) =>{
