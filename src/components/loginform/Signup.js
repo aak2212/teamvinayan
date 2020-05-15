@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
-//import FBlogo from ''
+import firebase from '../../Services/firebase'; 
+import LoginString from '../loginform/LoginStrings';
 
 const regexp = RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
 
 const initState = {
     checked: true, 
-    email: '',
+    name: '',
+    email:'',
     password: '',
+    confirmPassword:'',
+    nameError:'',
     emailError: '',
-    passwordError: ''
+    passwordError: '',
+    confirmPasswordError: ''
 }
-
-class LoginForm extends Component {
+class SignUp extends Component {
 
     state = initState;
+    
+    handleNameChange = e => {
+        this.setState({
+            name: e.target.value
+        });
+    };
 
     handleEmailChange = e => {
         this.setState({
@@ -28,15 +38,31 @@ class LoginForm extends Component {
             password: e.target.value
         });
     };
+    handleConfirmPasswordChange = e => {
+        this.setState({
+            confirmPassword: e.target.value
+        });
+    };
 
-    //validate
+     //validating
     validate = () => {
         let inputError = false;
         const errors = {
+            nameError: '',
             emailError: '',
-            passwordError: ''
+            passwordError: '',
+            confirmPasswordError: ''
         }
-
+        
+        if(!this.state.name) {
+            inputError=true;
+            errors.nameError='Please enter your name'
+        } else if(this.state.name.length<5){
+                inputError =true;
+                errors.nameError="Enter your full name"
+            
+        }
+            
         if(!this.state.email) {
             inputError = true;
             errors.emailError = 'Please enter a valid email'
@@ -51,6 +77,10 @@ class LoginForm extends Component {
             inputError = true;
             errors.passwordError = "Your password must contain between 4 to 32 characters"
         }
+        if(this.state.confirmPassword!==this.state.password){
+            inputError = true;
+            errors.confirmPasswordError = "Confirm password does not match, re-enter "
+        }
         
         this.setState({
             ...errors
@@ -59,14 +89,14 @@ class LoginForm extends Component {
         return inputError;
     };
 
-    onSubmit = e => {
-        e.preventDefault()
-
-        const err = this.validate();
-        if(!err) {
-            this.setState(initState);
-        }
-    }
+   // onSubmit = e => {
+     //   e.preventDefault()
+//
+  //      const err = this.validate();
+    //    if(!err) {
+      //      this.setState(initState);
+        //}
+    //}
 
     //Checkbox
     handlerCheckbox = e => {
@@ -75,12 +105,65 @@ class LoginForm extends Component {
         });
     };
 
+    async onSubmit(e){
+
+        const {name,password,email}=this.state;
+        e.preventDefault();
+        try{
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(async result => {
+                firebase.firestore().collection('users')
+                .add({
+                    name,
+                    id:result.user.uid,
+                    email,
+                    password,
+                    URL: '',
+                    description: '',
+                    messages:[{notificationid:"",number:0}]
+                }).then((docRef)=>{
+                    localStorage.setItem(LoginString.ID, result.user.uid);
+                    localStorage.setItem(LoginString.Name, name);
+                    localStorage.setItem(LoginString.Email, email);
+                    localStorage.setItem(LoginString.Password, password);
+                    localStorage.setItem(LoginString.PhotoURL, "");
+                    localStorage.setItem(LoginString.UPLOAD_CHANGED, "state_changed");
+                    localStorage.setItem(LoginString.Description, "");
+                    localStorage.setItem(LoginString.FirebaseDocumentId, docRef.id);
+                    this.setState({
+                        name: '',
+                        password:'',
+                        url:'',
+
+                    })
+                    this.props.history.push("/chat")
+                })
+                .catch((e)=>{
+                    console.e("Error adding document", e)
+                });
+            })
+        }
+        catch(error){
+            document.getElementById('1').innerHTML="error in signing up, please try again"
+        }
+    }
     render() {
         return (
             <FormContainer>
                 <div className="form-container">
                     <form>
-                        <h1 align="center">Sign In</h1>
+                        <h1 align="center">Sign Up</h1>
+                        <div className="input-container">
+                            <input 
+                            className={this.state.nameError ? 'input-error input-empty' : 'input-empty'} 
+                            type="name"  
+                            required
+                            onChange={this.handleNameChange}
+                            value={this.state.name}
+                            />
+                            <label>Full Name</label>
+                            <span style={{color: '#db7302'}}>{this.state.nameError}</span>
+                        </div>
                         <div className="input-container">
                             <input 
                             className={this.state.emailError ? 'input-error input-empty' : 'input-empty'} 
@@ -103,7 +186,17 @@ class LoginForm extends Component {
                             <span style={{color: '#db7302'}}>{this.state.passwordError}</span>
                         </div>
                         <div className="input-container">
-                          <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign In</Btn>  
+                            <input className={this.state.confirmPasswordError ? 'input-error input-empty' : 'input-empty'} 
+                            type="password" 
+                            required 
+                            onChange={this.handleConfirmPasswordChange}
+                            value={this.state.confirmPassword}
+                            />
+                            <label>Confirm Password</label>
+                            <span style={{color: '#db7302'}}>{this.state.confirmPasswordError}</span>
+                        </div>
+                        <div className="input-container">
+                          <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign Up</Btn>  
                         </div>
                         <label className="checkbox-container">
                             Remember me
@@ -115,43 +208,43 @@ class LoginForm extends Component {
                         </Link>
                         <br/>
                         <br/>
-                        <span style={{color: '#999'}}>New to Vinayan?</span><br />
-                        <Link to="/signup" className="sign-up-text">
-                            Sign up now
+                        <span style={{color: '#999'}}>Already registered?</span><br />
+                        <Link to="/login" className="login-text">
+                            Sign In
                         </Link>
+                        <div className="error">
+                            <p id="1" style={{color:'red'}}></p>
+                        </div>
                     </form>
                 </div>
             </FormContainer>
         )
     }
+
 }
 
-export default LoginForm;
+export default SignUp;
 
-//Form Container
+//style
+
 const FormContainer = styled.div`
     display: grid;
     justify-content: center;
     position: relative;
     z-index: 5;
-
-
     .form-container {
         background: #343a40;
         position: realtive;
         width: 28.125rem;
-        height: 41.25rem;
+        
         padding: 2rem;
-        margin-top: 4rem;
+        margin: 4rem 0 7rem 0;
     }
-
     .input-container {
         display: grid;
         grid-template-columns: 1fr;
         margin-top: 2rem;
-
     }
-
     .input-empty {
         color: #fff;
         background: #333;
@@ -160,7 +253,6 @@ const FormContainer = styled.div`
         height: 3rem;
         padding: 0.9rem 1.25rem 0;
     }
-
     form div label {
         postion: absolute;
         top: 0.625rem;
@@ -170,11 +262,9 @@ const FormContainer = styled.div`
         font-size: 1rem;
         transition: transform 150ms ease-out, font-size 150ms ease-out;
     }
-
     form div {
         position: relative;
     }
-
     input focus ~ label {
         top: 0.475rem;
         font-size: 0.7rem;
@@ -183,12 +273,9 @@ const FormContainer = styled.div`
     input:focus {
         outline: none;
     }
-
     .input-error {
         border-bottom: 1px solid #db7302;
-
     }
-
     //Checkbox
     .checkbox-container {
         margin-left: -1.3rem;
@@ -198,24 +285,19 @@ const FormContainer = styled.div`
         color: #999;
         cursor: pointer;
     }
-
     .checkbox-container input {
-        display: none;
+        margin-right:0.2rem;
     }
-
     .checkbox-container .checkmark {
-        display: inline-block;
-        background: #454545;
+        display: inline;
+        
         width: 1.1rem;
         height: 1.1rem;
-        left: 33.5rem;
-        top: 26.35rem;
+        
         border-radius: 0.1rem;
         position: relative; 
     }
-
     .checkbox-container input:checked + .checkmark:after {
-        content: '';
         position: relative;
         height: 0.25rem;
         width: 0.625rem;
@@ -225,15 +307,13 @@ const FormContainer = styled.div`
         left: 21%;
         transform: rotate(-45deg);
     }
-
     .need-help {
         text-decoration: none;
         color: #828282;
         margin-left: 11.0rem;
         font-size: 0.9rem;
     }
-
-    .sign-up-text {
+    .login-text {
         font-size: 1.1rem;
         color: #fff;
         &:hover {
@@ -257,3 +337,4 @@ const Btn = styled.button`
     text-decoration: none;
     margin: 1rem 0;
 `;
+    

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import LoginForm from '../components/login/LoginForm';
-import signup from '../components/login/signup';
+import LoginForm from '../components/loginform/LoginForm';
+import Signup from '../components/loginform/Signup';
 //import LoginFooter from '../components/login/LoginFooter';
 import '../css/Main.css';
 
@@ -12,7 +12,7 @@ class Login extends Component {
             <div className="main-login-container">
                 <div className="header-top">
                 <Route exact path="/login" component={LoginForm} />
-                <Route exact path="/signup" component={signup} />
+                <Route exact path="/signup" component={Signup} />
                 </div>
                 
                 
