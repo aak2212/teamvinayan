@@ -19,15 +19,12 @@ import Grid from '@material-ui/core/Grid';
 const regexp = RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
 
 const initState = {
-    checked: true, 
+    
     email: '',
-    password: '',
-    error: '',
-    emailError: '',
-    passwordError: ''
+    
 }
 
-class LoginForm extends Component {
+class ForgotPassword extends Component {
 
     state = initState;
     //this.handleSubmit = this.handleSubmit.bind(this)
@@ -37,18 +34,13 @@ class LoginForm extends Component {
         }); 
     };
 
-    handlePasswordChange = e => {
-        this.setState({
-            password: e.target.value
-        });
-    };
-
+    
     //validate
     validate = () => {
         let inputError = false;
         const errors = {
             emailError: '',
-            passwordError: ''
+            
         }
 
         if(!this.state.email) {
@@ -61,11 +53,7 @@ class LoginForm extends Component {
             )
         }
 
-        if(this.state.password.length < 4) {
-            inputError = true;
-            errors.passwordError = "Your password must contain between 4 to 32 characters"
-        }
-        
+      
         this.setState({
             ...errors
         })
@@ -93,53 +81,41 @@ class LoginForm extends Component {
             this.setState({isLoading: false})
         }
     }
-
+    
     async onSubmit(e){
         e.preventDefault();
-        this.setState({error:""});
-
-        await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(async result =>{
-            let user = result.user;
-            if(user){
-                await firebase.firestore().collection('users')
-                .where('id', '==', user.uid)
-                .get()
-                .then(function(querySnapshot){
-                    querySnapshot.forEach(function(doc){
-                        const currentdata = doc.data();
-                        localStorage.setItem(LoginString.FirebaseDocumentId, doc.id);
-                        localStorage.setItem(LoginString.ID, currentdata.id);
-                        localStorage.setItem(LoginString.Name, currentdata.name);
-                        localStorage.setItem(LoginString.Email, currentdata.email);
-                        localStorage.setItem(LoginString.Password, currentdata.password);
-                        localStorage.setItem(LoginString.PhotoURL, currentdata.URL);
-                        localStorage.setItem(LoginString.Description, currentdata.description);
-                    })
-                })
-            }
-            this.props.history.push('/chat')
-        }).catch(function(){
-            this.setState({
-                error: "error while signing in, please try again"
-            })
-        })
-    }
-
-    //Checkbox
-    handlerCheckbox = e => {
-        this.setState({
-            checked: e.target.checked
-        });
-    };
+        
+        var auth = firebase.auth();
+        var email = document.getElementById('email').value;
+    
+        if(email != "") {
+          auth.sendPasswordResetEmail(email).then(async()=>{
+            window.alert("Email has been sent to you, Please check and verfiy");
+          })
+          .catch(async(error)=>{
+            var errorCode = error.code;
+            var errorMessage = error.message;
+    
+            console.log(errorCode);
+            console.log(errorMessage);
+    
+            window.alert("Message : " + errorMessage);
+          });
+        }
+        else {
+          window.alert("Please enter you email address");
+        }
+      }
+    
 
     render() {
         return (
             <FormContainer>
                 <div className="form-container">
                     <form>
-                        <h1 align="center">Sign In</h1>
+                        <h1 style={{color: 'rgba(172, 172, 172)'}}align="center">Forgot Password?</h1>
                         <div className="input-container">
+                            
                             <input 
                             className={this.state.emailError ? 'input-error input-empty' : 'input-empty'} 
                             type="email"  
@@ -151,33 +127,16 @@ class LoginForm extends Component {
                             <span style={{color: '#db7302'}}>{this.state.emailError}</span>
                         </div>
                         <div className="input-container">
-                            <input className={this.state.passwordError ? 'input-error input-empty' : 'input-empty'} 
-                            type="password" 
-                            required 
-                            onChange={this.handlePasswordChange}
-                            value={this.state.password}
-                            />
-                            <label>Password</label>
-                            <span style={{color: '#db7302'}}>{this.state.passwordError}</span>
-                        </div>
-                        <div className="input-container">
-                          <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign In</Btn> 
+                          <Btn type="submit" onClick={e => this.onSubmit(e)}>Reset Password</Btn> 
                           
                         </div>
                         
-                        <label className="checkbox-container">
-                            
-                            <input type="checkbox" defaultChecked={this.state.checked} onChange={this.handlerCheckbox} />
-                            <span className="checkmark"></span>
-                            Remember me
-                        </label>
-                        <Link to="/forgotPassword" className="forgot-password">
-                            Forgot Password?
+                        <Link to="/help" className="need-help">
+                            Need Help?
                         </Link>
                         <br/>
                         <br/>
-                        <span style={{color: '#999'}}>New to Vinayan?</span>
-                        <Link to="/" className="back-home">Back to Home</Link><br />
+                        <span style={{color: '#999'}}>New to Vinayan?</span><br />
                         <Link to="/signup" className="sign-up-text">
                             Sign up now
                         </Link>
@@ -189,7 +148,7 @@ class LoginForm extends Component {
     }
 }
 
-export default LoginForm;
+export default ForgotPassword;
 
 //Form Container
 const FormContainer = styled.div`
@@ -198,7 +157,9 @@ const FormContainer = styled.div`
     position: relative;
     z-index: 5;
 
-
+    .para {
+        jusify-text: center;
+    }
     .form-container {
         background: #343a40;
         position: realtive;
@@ -254,52 +215,11 @@ const FormContainer = styled.div`
 
     }
 
-    //Checkbox
-    .checkbox-container {
-        margin-left: -1.3rem;
-        padding-left: 1.875rem;
-        poisiton: relative;
-        font-size: 0.9rem;
-        color: #999;
-        cursor: pointer;
-    }
-
-    .checkbox-container input {
-        margin-right:0.2rem;
-    }
-
-    .checkbox-container .checkmark {
-        display: inline;
-        
-        width: 1.1rem;
-        height: 1.1rem;
-        
-        border-radius: 0.1rem;
-        position: relative; 
-    }
-    .checkbox-container input:checked + .checkmark:after {
-        position: relative;
-        height: 0.25rem;
-        width: 0.625rem;
-        border-left: 2px solid #000;
-        border-bottom: 2px solid #000;
-        top: 25%;
-        left: 21%;
-        transform: rotate(-45deg);
-    }
-
-    .forgot-password {
+    .need-help {
         text-decoration: none;
         color: #828282;
-        margin-left: 9.0rem;
+        margin-left: 0rem;
         font-size: 0.9rem;
-    }
-
-    .back-home {
-        text-decoration: none;
-        color: #828282;
-        margin-left: 10.2rem;
-        font-size: 1.0rem;
     }
 
     .sign-up-text {

@@ -152,7 +152,7 @@ class SignUp extends Component {
             <FormContainer>
                 <div className="form-container">
                     <form>
-                        <h1 align="center">Sign Up</h1>
+                        <h1 style={{color: 'rgba(172, 172, 172)'}} align="center">Sign Up</h1>
                         <div className="input-container">
                             <input 
                             className={this.state.nameError ? 'input-error input-empty' : 'input-empty'} 
@@ -199,16 +199,17 @@ class SignUp extends Component {
                           <Btn type="submit" onClick={e => this.onSubmit(e)}>Sign Up</Btn>  
                         </div>
                         <label className="checkbox-container">
-                            Remember me
+                            
                             <input type="checkbox" defaultChecked={this.state.checked} onChange={this.handlerCheckbox} />
-                            <span className="checkmark"></span>
+                            <span className="checkmark"></span>Remember me
                         </label>
                         <Link to="/help" className="need-help">
                             Need Help?
                         </Link>
                         <br/>
                         <br/>
-                        <span style={{color: '#999'}}>Already registered?</span><br />
+                        <span style={{color: '#999'}}>Already registered?</span>
+                        <Link to="/" className="back-home">Back to Home</Link><br />
                         <Link to="/login" className="login-text">
                             Sign In
                         </Link>
@@ -236,7 +237,7 @@ const FormContainer = styled.div`
         background: #343a40;
         position: realtive;
         width: 28.125rem;
-        
+        border-radius: 10px;
         padding: 2rem;
         margin: 4rem 0 7rem 0;
     }
@@ -313,6 +314,13 @@ const FormContainer = styled.div`
         margin-left: 11.0rem;
         font-size: 0.9rem;
     }
+    .back-home {
+        text-decoration: none;
+        color: #828282;
+        margin-left: 8.5rem;
+        font-size: 1.0rem;
+    }
+
     .login-text {
         font-size: 1.1rem;
         color: #fff;
